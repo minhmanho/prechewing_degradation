@@ -1,0 +1,427 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>On Pre-chewing Compression Degradation - Man M. Ho</title>
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<table width="80%" style="margin-left: auto;  margin-right: auto; table-layout:fixed;">
+	<tbody>
+		<tr>
+			<td>
+				<h1>On Pre-chewing Compression Degradation for Learned Video Compression</h1>
+				<table width="90%" style="margin-left: auto;  margin-right: auto; table-layout:fixed;">
+					<tbody>
+						<tr>
+							<td>
+							<span style="font-size: 24px;"><a href="https://minhmanho.github.io/"><b>Man M. Ho<sup>1</sup></b></a></span>
+							</td>
+
+							<td>
+							<span style="font-size: 24px;"><b>Heming Sun<sup>2,3</sup></b></span>
+							</td>
+
+							<td>
+							<span style="font-size: 24px;"><b>Zhiqiang Zhang<sup>1</sup></b></span>
+							</td>
+
+							<td>
+							<span style="font-size: 24px;"><a href="https://www.zhou-lab.info/jinjia-zhou"><b>Jinjia Zhou<sup>1</sup></b></a></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<br>
+				<table width="90%" style="margin-left: auto;  margin-right: auto; table-layout:fixed;">
+					<tbody>
+						<tr>
+							<td>
+								1. Hosei Univerisity, Tokyo, Japan
+							</td>
+							<td>
+								2. Waseda University, Tokyo, Japan
+							</td>
+							<td>
+								3. JST PRESTO, Tokyo, Japan
+							</td>
+						</tr>
+				</tbody>
+				</table>
+				<br>
+
+				<table width="90%" style="margin-left: auto;  margin-right: auto; table-layout:fixed;">
+					<tbody><tr>
+					<td>
+						<a href="https://ieeexplore.ieee.org/document/10008873">[Paper]</a>
+					</td>
+					<td>
+						<a href="https://github.com/minhmanho/prechewing_degradation">[Source Code]</a>
+					</td>
+					
+					</tr></tbody>
+				</table>
+				<br>
+				In <b>IEEE International Conference on Visual Communications and Image Processing (VCIP), 2022</b>
+				<br>
+				<hr>
+			</td>
+		</tr>
+
+		<tr>
+			<td style="text-align: justify;">
+				<h2>Abstract</h2>
+				<br>
+				Artificial Intelligence (AI) needs huge amounts of data, 
+				and so does Learned Restoration for Video Compression. 
+				There are two main problems regarding training data. 
+				1) Preparing training compression degradation using 
+				a video codec (e.g., Versatile Video Coding - VVC) 
+				costs a considerable resource. Significantly, 
+				the more Quantization Parameters (QPs) we compress with, 
+				the more coding time and storage are required. 
+				2) The common way of training a newly initialized 
+				Restoration Network on pure compression degradation 
+				at the beginning is not effective. To solve these 
+				problems, we propose a Degradation Network to pre-chew 
+				(generalize and learn to synthesize) the real compression 
+				degradation, then present a hybrid training scheme 
+				that allows a Restoration Network to be trained on unlimited 
+				videos without compression. Concretely, we propose a QP-wise 
+				Degradation Network to learn how to compress video frames like 
+				VVC in real-time and can transform the degradation output 
+				between QPs linearly. The real compression degradation is 
+				thus pre-chewed as our Degradation Network can synthesize 
+				the more generalized degradation for a newly initialized 
+				Restoration Network to learn easier. To diversify training 
+				video content without compression and avoid overfitting, we 
+				design a Training Framework for Semi-Compression Degradation (TF-SCD) 
+				to train our model on many fake compressed videos together with real compressed videos. 
+				As a result, the Restoration Network can quickly jump to the near-best 
+				optimum at the beginning of training, proving our promising scheme of 
+				using pre-chewed data for the very first steps of training. 
+				In other words, a newly initialized Learned Video Compression 
+				can be warmed up efficiently but effectively with our pre-trained 
+				Degradation Network. Besides, our proposed TF-SCD can further enhance 
+				the restoration performance in a specific range of QPs and provide a better 
+				generalization about QPs compared with the common way of training a restoration model.
+				<hr>
+			</td>
+			
+		</tr>
+		<tr>
+			<td>
+				<h2>Overall Concept</h2>
+				<br>
+				<div style="text-align: justify;">
+				<b>Figure:</b> Our Training Framework for Semi-Compression Degradation. 
+				We train a QP-wise Degradation Network to learn and synthesize compression degradation 
+				for an unlimited number of videos on the Internet. As an advantage, 
+				the Restoration Network can be trained on more video frames without compression, 
+				diversifying training video content and QPs.</div>
+				<br>
+				<img src="images/story.jpg" width=80%/>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<h2>Network Architecture</h2>
+				<br>
+				<img src="images/net.jpg" width=100%/>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<h2>Ablation study on metrics to learn compression degradation</h2>
+				<br>
+				<div style="text-align: justify;">
+				<b>Table:</b> Ablation study on loss functions such as L1, L2, and LPIPS 
+				for generating compression degradation. The combination of L1 and LPIPS provides the best 
+				performance in PSNR, LPIPS, and MS-SSIM on average as <b>bold</b>.</div>
+				<br>
+				<div class="tg-wrap"><table class="tg">
+					<thead>
+					  <tr>
+						<th class="tg-nrix" rowspan="2">Quantization Parameters</th>
+						<th class="tg-nrix" colspan="3">L2</th>
+						<th class="tg-nrix" colspan="3">L1</th>
+						<th class="tg-nrix" colspan="3">L1+LPIPS&darr;</th>
+					  </tr>
+					  <tr>
+						<th class="tg-nrix">PSNR&uarr;</th>
+						<th class="tg-nrix">LPIPS&darr;</th>
+						<th class="tg-nrix">MS-SSIM&uarr;</th>
+						<th class="tg-nrix">PSNR&uarr;</th>
+						<th class="tg-nrix">LPIPS&darr;</th>
+						<th class="tg-nrix">MS-SSIM&uarr;</th>
+						<th class="tg-nrix">PSNR&uarr;</th>
+						<th class="tg-nrix">LPIPS&darr;</th>
+						<th class="tg-nrix">MS-SSIM&uarr;</th>
+					  </tr>
+					</thead>
+					<tbody>
+					  <tr>
+						<td class="tg-nrix">32</td>
+						<td class="tg-nrix">36.31</td>
+						<td class="tg-nrix">0.0910</td>
+						<td class="tg-nrix">0.9668</td>
+						<td class="tg-nrix">37.92</td>
+						<td class="tg-nrix">0.0476</td>
+						<td class="tg-nrix">0.9777</td>
+						<td class="tg-nrix">38.42</td>
+						<td class="tg-nrix">0.0368</td>
+						<td class="tg-nrix">0.9799</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">35</td>
+						<td class="tg-nrix">36.03</td>
+						<td class="tg-nrix">0.0958</td>
+						<td class="tg-nrix">0.9647</td>
+						<td class="tg-nrix">37.49</td>
+						<td class="tg-nrix">0.0570</td>
+						<td class="tg-nrix">0.9757</td>
+						<td class="tg-nrix">37.99</td>
+						<td class="tg-nrix">0.0428</td>
+						<td class="tg-0so2">0.9781</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">37</td>
+						<td class="tg-nrix">35.95</td>
+						<td class="tg-nrix">0.0976</td>
+						<td class="tg-nrix">0.9657</td>
+						<td class="tg-nrix">37.25</td>
+						<td class="tg-nrix">0.0630</td>
+						<td class="tg-nrix">0.9763</td>
+						<td class="tg-nrix">37.71</td>
+						<td class="tg-nrix">0.0476</td>
+						<td class="tg-nrix">0.9782</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">40</td>
+						<td class="tg-nrix">35.57</td>
+						<td class="tg-nrix">0.1001</td>
+						<td class="tg-nrix">0.9628</td>
+						<td class="tg-nrix">36.59</td>
+						<td class="tg-nrix">0.0721</td>
+						<td class="tg-nrix">0.9728</td>
+						<td class="tg-nrix">36.93</td>
+						<td class="tg-nrix">0.0566</td>
+						<td class="tg-nrix">0.9747</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">42</td>
+						<td class="tg-nrix">35.27</td>
+						<td class="tg-nrix">0.1026</td>
+						<td class="tg-nrix">0.9606</td>
+						<td class="tg-nrix">36.09</td>
+						<td class="tg-nrix">0.0790</td>
+						<td class="tg-nrix">0.9701</td>
+						<td class="tg-nrix">36.33</td>
+						<td class="tg-nrix">0.0640</td>
+						<td class="tg-nrix">0.9718</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">45</td>
+						<td class="tg-nrix">34.74</td>
+						<td class="tg-nrix">0.1084</td>
+						<td class="tg-nrix">0.9560</td>
+						<td class="tg-nrix">35.22</td>
+						<td class="tg-nrix">0.0936</td>
+						<td class="tg-nrix">0.9645</td>
+						<td class="tg-nrix">35.33</td>
+						<td class="tg-nrix">0.0785</td>
+						<td class="tg-nrix">0.9658</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">47</td>
+						<td class="tg-nrix">34.27</td>
+						<td class="tg-nrix">0.1157</td>
+						<td class="tg-nrix">0.9519</td>
+						<td class="tg-nrix">34.53</td>
+						<td class="tg-nrix">0.1086</td>
+						<td class="tg-nrix">0.9592</td>
+						<td class="tg-nrix">34.57</td>
+						<td class="tg-nrix">0.0941</td>
+						<td class="tg-nrix">0.9603</td>
+					  </tr>
+					  <tr>
+						<td class="tg-nrix">Avg.</td>
+						<td class="tg-nrix">35.45</td>
+						<td class="tg-nrix">0.1016</td>
+						<td class="tg-nrix">0.9612</td>
+						<td class="tg-nrix">36.44</td>
+						<td class="tg-nrix">0.0744</td>
+						<td class="tg-nrix">0.9709</td>
+						<td class="tg-zz9l">36.76</td>
+						<td class="tg-zz9l">0.0601</td>
+						<td class="tg-zz9l">0.9727</td>
+					  </tr>
+					</tbody>
+					</table></div>
+				<br>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<h2>Comparison </h2>
+				<br>
+				<div style="text-align: justify;">
+				<b>Table:</b> Quantitative Comparison on Restoration Performance between DnCNN trained on S-Set 
+				with Real QPs={32,37,42,47} and S-Set with Real QPs={32,37,42,47} combined with U-Set 
+				with Fake QPs={32,35,37,40,42,45,47} on videos from the Internet using PSNR, LPIPS, MS-SSIM. 
+				Our method outperforms the common way in a QP range of [22 .. 51] as highlighted rows.</div>
+				<br>
+				<div class="tg-wrap"><table class="tg">
+					<thead>
+					  <tr>
+						<th class="tg-nrix" rowspan="2">Quantization Parameters</th>
+						<th class="tg-nrix" colspan="3">The Common Way</th>
+						<th class="tg-nrix" colspan="3">Our Way</th>
+					  </tr>
+					  <tr>
+						<th class="tg-nrix">PSNR&uarr;</th>
+						<th class="tg-nrix">LPIPS&darr;</th>
+						<th class="tg-nrix">MS-SSIM&uarr;</th>
+						<th class="tg-nrix">PSNR&uarr;</th>
+						<th class="tg-nrix">LPIPS&darr;</th>
+						<th class="tg-nrix">MS-SSIM&uarr;</th>
+					  </tr>
+					</thead>
+					<tbody>
+					  <tr>
+						<td class="tg-nrix">17</td>
+						<td class="tg-nrix">42.69</td>
+						<td class="tg-nrix">0.0189</td>
+						<td class="tg-nrix">0.9880</td>
+						<td class="tg-nrix">42.53</td>
+						<td class="tg-nrix">0.0177</td>
+						<td class="tg-nrix">0.9875</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">22</td>
+						<td class="tg-zz9l">40.87</td>
+						<td class="tg-zz9l">0.0312</td>
+						<td class="tg-zz9l">0.9837</td>
+						<td class="tg-zz9l">40.92</td>
+						<td class="tg-zz9l">0.0243</td>
+						<td class="tg-zz9l">0.9839</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">27</td>
+						<td class="tg-zz9l">39.60</td>
+						<td class="tg-zz9l">0.0390</td>
+						<td class="tg-zz9l">0.9788</td>
+						<td class="tg-zz9l">39.68</td>
+						<td class="tg-zz9l">0.0312</td>
+						<td class="tg-zz9l">0.9793</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">32</td>
+						<td class="tg-zz9l">38.23</td>
+						<td class="tg-zz9l">0.0494</td>
+						<td class="tg-zz9l">0.9718</td>
+						<td class="tg-zz9l">38.32</td>
+						<td class="tg-zz9l">0.0421</td>
+						<td class="tg-zz9l">0.9725</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">35</td>
+						<td class="tg-zz9l">37.31</td>
+						<td class="tg-zz9l">0.0592</td>
+						<td class="tg-zz9l">0.9662</td>
+						<td class="tg-zz9l">37.40</td>
+						<td class="tg-zz9l">0.0522</td>
+						<td class="tg-zz9l">0.9670</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">37</td>
+						<td class="tg-zz9l">36.54</td>
+						<td class="tg-zz9l">0.0677</td>
+						<td class="tg-zz9l">0.9591</td>
+						<td class="tg-zz9l">36.59</td>
+						<td class="tg-zz9l">0.0621</td>
+						<td class="tg-zz9l">0.9597</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">40</td>
+						<td class="tg-zz9l">35.52</td>
+						<td class="tg-zz9l">0.0833</td>
+						<td class="tg-zz9l">0.9508</td>
+						<td class="tg-zz9l">35.55</td>
+						<td class="tg-zz9l">0.0785</td>
+						<td class="tg-zz9l">0.9514</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">42</td>
+						<td class="tg-zz9l">34.80</td>
+						<td class="tg-zz9l">0.0960</td>
+						<td class="tg-zz9l">0.9444</td>
+						<td class="tg-zz9l">34.81</td>
+						<td class="tg-zz9l">0.0918</td>
+						<td class="tg-zz9l">0.9451</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">45</td>
+						<td class="tg-zz9l">33.72</td>
+						<td class="tg-zz9l">0.1195</td>
+						<td class="tg-zz9l">0.9340</td>
+						<td class="tg-zz9l">33.73</td>
+						<td class="tg-zz9l">0.1170</td>
+						<td class="tg-zz9l">0.9347</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">47</td>
+						<td class="tg-zz9l">32.92</td>
+						<td class="tg-zz9l">0.1398</td>
+						<td class="tg-zz9l">0.9245</td>
+						<td class="tg-zz9l">32.92</td>
+						<td class="tg-zz9l">0.1383</td>
+						<td class="tg-zz9l">0.9250</td>
+					  </tr>
+					  <tr>
+						<td class="tg-zz9l">51</td>
+						<td class="tg-zz9l">31.22</td>
+						<td class="tg-zz9l">0.1984</td>
+						<td class="tg-zz9l">0.8997</td>
+						<td class="tg-zz9l">31.22</td>
+						<td class="tg-zz9l">0.1978</td>
+						<td class="tg-zz9l">0.9003</td>
+					  </tr>
+					</tbody>
+					</table></div>
+				<hr>
+				</td>
+		</tr>
+		<tr>
+			<td style="font-size: 16px; text-align: left;">
+				<h2>Consider citing our work</h2>
+				<br>
+				<code>
+					@inproceedings{ho2022pre, <br>
+						title={On Pre-chewing Compression Degradation for Learned Video Compression}, <br>
+						author={Ho, Man Minh and Sun, Heming and Zhang, Zhiqiang and Zhou, Jinjia}, <br>
+						booktitle={2022 IEEE International Conference on Visual Communications and Image Processing (VCIP)}, <br>
+						pages={1--5}, <br>
+						year={2022},<br>
+						organization={IEEE}<br>
+					}
+				</code>
+			<hr>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<h2>License</h2>
+				<br>
+				This work (as well as its materials) is for non-commercial uses and research purposes only.
+				<hr>
+			</td>
+		</tr>
+<br>
+</tbody>
+</table>
+<br>
+
+</html>
